@@ -5,3 +5,13 @@
 
 #pragma once
 
+// QWERTY + VI: Media + V sends F14 for a host-side dictation shortcut.
+// Replaces the Media layer lock at that position.
+#if defined(MIRYOKU_NAV_VI)
+#define MIRYOKU_LAYER_MEDIA \
+TD(U_TD_BOOT),     TD(U_TD_U_TAP),    TD(U_TD_U_EXTRA),  TD(U_TD_U_BASE),   U_NA,              RGB_MOD,           RGB_HUI,           RGB_SAI,           RGB_VAI,           RGB_TOG,           \
+KC_LGUI,           KC_LALT,           KC_LCTL,           KC_LSFT,           U_NA,              KC_MPRV,           KC_VOLD,           KC_VOLU,           KC_MNXT,           U_NU,              \
+U_NA,              KC_ALGR,           TD(U_TD_U_FUN),    KC_F14,            U_NA,              U_NU,              U_NU,              U_NU,              U_NU,              OU_AUTO,           \
+U_NP,              U_NP,              U_NA,              U_NA,              U_NA,              KC_MSTP,           KC_MPLY,           KC_MUTE,           U_NP,              U_NP
+#endif
+
