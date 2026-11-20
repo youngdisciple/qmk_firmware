@@ -1,6 +1,9 @@
 #include "wait.h"
 #include "quantum.h"
 
+// Miryoku League mode supplies steady mode colors and its own startup hook.
+#if !defined(MIRYOKU_LEAGUE)
+
 // This is to keep state between callbacks, when it is 0 the
 // initial RGB flash is finished
 uint8_t _hue_countdown = 50;
@@ -41,6 +44,8 @@ void keyboard_post_init_user(void) {
     // Flash a little on start
     defer_exec(50, flash_led, NULL);
 }
+
+#endif
 
 // Make the builtin RGB led show different colors per layer:
 // This seemed like a good idea but turned out pretty annoying,

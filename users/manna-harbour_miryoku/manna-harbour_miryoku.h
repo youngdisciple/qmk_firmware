@@ -14,6 +14,12 @@ MIRYOKU_LAYER_LIST
 #undef MIRYOKU_X
 };
 
+#if defined(MIRYOKU_LEAGUE)
+enum miryoku_custom_keycodes {
+    U_LOL_TOGGLE = SAFE_RANGE,
+};
+#endif
+
 #define U_MACRO_VA_ARGS(macro, ...) macro(__VA_ARGS__)
 
 #if !defined (MIRYOKU_MAPPING)

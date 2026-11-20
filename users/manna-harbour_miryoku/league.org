@@ -1,0 +1,71 @@
+#+TITLE: Cheapino League mode
+
+Enabled for the Cheapino with VI navigation and the normal (unflipped) layer
+orientation. Build with the existing personal options:
+
+#+begin_src sh
+qmk compile -kb cheapino -km manna-harbour_miryoku -e MIRYOKU_ALPHAS=QWERTY -e MIRYOKU_NAV=VI -e MIRYOKU_CLIPBOARD=WIN
+#+end_src
+
+* Switching
+
+Hold the normal Miryoku Media thumb (Escape) and press physical T to enter.
+That same thumb becomes Fn in League mode. Hold it and press physical T again
+(the key that sends 5 in League mode) to exit. Release both keys after switching.
+Keys held through a switch are cleared and ignored until released, preventing
+stuck modifiers or accidental typing. The selected normal Miryoku base layout
+is retained. Mode selection is not saved; startup always uses normal Miryoku.
+
+The RP2040-Zero LED is steady white in normal mode and gold in League mode,
+including when Media or League Fn is held. Brightness is 32/255. Startup shows
+white immediately, without the previous rainbow. Mode colors do not write EEPROM.
+
+* Layouts
+
+League mode:
+
+#+begin_example
+  1      2      3      4      5          Y      U      I      O      P
+  Q      W      E      R     Alt         H      J      K      L      '
+  A      S      D      F      B          N      M      ,      .      /
+              Fn    Space  Ctrl       Enter  Backspace  Shift
+#+end_example
+
+Holding League Fn (dash means disabled):
+
+#+begin_example
+ Esc     -      -      -     Exit       Y      U      I      O      P
+ Tab    F4     F5      -      -         H      J      K      L      '
+  -     F1     F2     F3      -         N      M      ,      .      /
+              Fn    Space  Ctrl       Enter  Backspace  Shift
+#+end_example
+
+The function keys retain their Miryoku positions. They send ordinary F1-F5
+keycodes; camera behavior follows the game's bindings. There are no 6/7 keys
+or separate Utility layer. Exit to normal Miryoku to type in chat, then re-enter
+League mode manually. The normal Miryoku function layer is unchanged.
+
+Gaming keys have no tap-hold behavior. Auto Shift is disabled while gaming and
+its previous enabled/disabled state is restored on exit. Caps Word and active
+modifiers are cleared when switching. Encoder controls and Media + V (F14)
+remain unchanged.
+
+* Verification and flashing
+
+Run the host checks for the actual mode handler and configured layouts:
+
+#+begin_src sh
+cc -std=c11 -Wall -Wextra -Werror '-DQMK_KEYBOARD_H="league_stub.h"' -Iusers/manna-harbour_miryoku/tests -Iusers/manna-harbour_miryoku -Iquantum -Iquantum/keymap_extras -Iquantum/sequencer users/manna-harbour_miryoku/league.c users/manna-harbour_miryoku/tests/test_league.c -o /tmp/qmk-test-league
+/tmp/qmk-test-league
+#+end_src
+
+After a successful firmware build, flash its UF2 with:
+
+#+begin_src sh
+qmk flash .build/cheapino_manna-harbour_miryoku.uf2
+#+end_src
+
+On the existing Miryoku firmware, hold Media and double-tap physical Q to enter
+the bootloader. Alternatively, use the controller's BOOT/RESET buttons.
+Verify white at startup, gold after entering League mode, camera keys and Tab
+while holding Fn, then white and normal typing after exiting.
