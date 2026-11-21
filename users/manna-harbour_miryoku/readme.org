@@ -42,8 +42,8 @@ Any local changes to existing workflow files should be made independently in com
 
 ** Building
 
-For this checkout's Cheapino League mode, layouts, mode colors, tests, and
-flashing instructions, see [[file:league.org][Cheapino League mode]].
+For this checkout's Cheapino League and Fortnite modes, layouts, mode colors,
+tests, and flashing instructions, see [[file:league.org][Cheapino gaming modes]].
 
 
 *** Local Builds

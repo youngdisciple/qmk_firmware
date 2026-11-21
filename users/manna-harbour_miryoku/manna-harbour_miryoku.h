@@ -17,6 +17,7 @@ MIRYOKU_LAYER_LIST
 #if defined(MIRYOKU_LEAGUE)
 enum miryoku_custom_keycodes {
     U_LOL_TOGGLE = SAFE_RANGE,
+    U_FORTNITE_TOGGLE,
 };
 #endif
 

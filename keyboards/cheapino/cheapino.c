@@ -1,7 +1,7 @@
 #include "wait.h"
 #include "quantum.h"
 
-// Miryoku League mode supplies steady mode colors and its own startup hook.
+// Miryoku gaming modes supply steady mode colors and their own startup hook.
 #if !defined(MIRYOKU_LEAGUE)
 
 // This is to keep state between callbacks, when it is 0 the

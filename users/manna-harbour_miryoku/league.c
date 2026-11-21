@@ -5,27 +5,29 @@
 
 #if defined(MIRYOKU_LEAGUE)
 
-static bool autoshift_before_league;
+static bool autoshift_before_gaming;
 static bool mode_indicator_ready;
 // Keys held through a mode change must be released before they can act again.
 static matrix_row_t transition_keys[MATRIX_ROWS];
 
-static void set_mode_color(bool league) {
+static void set_mode_color(layer_state_t state) {
+    const bool league = (state & ((layer_state_t)1 << U_LOL)) != 0;
+    const bool fortnite = (state & ((layer_state_t)1 << U_FORTNITE)) != 0;
     rgblight_enable_noeeprom();
     rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
-    // HSV hue 30 is gold; zero saturation gives white. Keep brightness low.
-    rgblight_sethsv_noeeprom(league ? 30 : 0, league ? 255 : 0, 32);
+    // Gold for League, blue for Fortnite, white for normal typing.
+    rgblight_sethsv_noeeprom(fortnite ? 170 : league ? 30 : 0, (league || fortnite) ? 255 : 0, 32);
 }
 
 void keyboard_post_init_user(void) {
     mode_indicator_ready = true;
-    set_mode_color(false);
+    set_mode_color(0);
 }
 
 layer_state_t layer_state_set_user(layer_state_t state) {
     // quantum_init invokes this hook before rgblight_init has set up DMA/PIO.
     if (mode_indicator_ready) {
-        set_mode_color((state & ((layer_state_t)1 << U_LOL)) != 0);
+        set_mode_color(state);
     }
     return state;
 }
@@ -40,20 +42,24 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         return false;
     }
 
-    if (keycode != U_LOL_TOGGLE) {
+    if (keycode != U_LOL_TOGGLE && keycode != U_FORTNITE_TOGGLE) {
         return true;
     }
     if (!record->event.pressed) {
         return false;
     }
 
-    const bool leaving_league = layer_state_is(U_LOL);
+    const uint8_t target = keycode == U_LOL_TOGGLE ? U_LOL : U_FORTNITE;
+    const bool was_gaming = layer_state_is(U_LOL) || layer_state_is(U_FORTNITE);
+    const bool leaving_gaming = layer_state_is(target);
     for (uint8_t i = 0; i < MATRIX_ROWS; ++i) {
         transition_keys[i] = matrix_get_row(i);
     }
 
-    if (!leaving_league) {
-        autoshift_before_league = get_autoshift_state();
+    if (!was_gaming) {
+        autoshift_before_gaming = get_autoshift_state();
+    }
+    if (!leaving_gaming) {
         autoshift_disable();
     }
     caps_word_off();
@@ -64,13 +70,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 #endif
     clear_keyboard();
 
-    if (leaving_league) {
+    if (leaving_gaming) {
         layer_clear();
-        if (autoshift_before_league) {
+        if (autoshift_before_gaming) {
             autoshift_enable();
         }
     } else {
-        layer_move(U_LOL);
+        layer_move(target);
     }
     return false;
 }

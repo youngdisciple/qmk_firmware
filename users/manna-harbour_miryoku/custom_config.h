@@ -20,7 +20,9 @@ MIRYOKU_X(NUM, "Num") \
 MIRYOKU_X(SYM, "Sym") \
 MIRYOKU_X(FUN, "Fun") \
 MIRYOKU_X(LOL, "League") \
-MIRYOKU_X(LOL_FN, "League Fn")
+MIRYOKU_X(LOL_FN, "League Fn") \
+MIRYOKU_X(FORTNITE, "Fortnite") \
+MIRYOKU_X(FORTNITE_FN, "Fortnite Fn")
 
 #define MIRYOKU_LAYERMAPPING_LOL MIRYOKU_MAPPING
 #define MIRYOKU_LAYERMAPPING_LOL_FN MIRYOKU_MAPPING
@@ -32,14 +34,31 @@ KC_A,             KC_S,             KC_D,             KC_F,             KC_B,   
 U_NP,             U_NP,             MO(U_LOL_FN),     KC_SPC,           KC_LCTL,          KC_ENT,           KC_BSPC,          KC_LSFT,          U_NP,             U_NP
 
 #define MIRYOKU_LAYER_LOL_FN \
-KC_ESC,           KC_NO,            KC_NO,            KC_NO,            U_LOL_TOGGLE,     KC_TRNS,          KC_TRNS,          KC_TRNS,          KC_TRNS,          KC_TRNS,          \
-KC_TAB,           KC_F4,            KC_F5,            KC_NO,            KC_NO,            KC_TRNS,          KC_TRNS,          KC_TRNS,          KC_TRNS,          KC_TRNS,          \
-KC_NO,            KC_F1,            KC_F2,            KC_F3,            KC_NO,            KC_TRNS,          KC_TRNS,          KC_TRNS,          KC_TRNS,          KC_TRNS,          \
+KC_NO,            KC_NO,            KC_NO,            KC_NO,            U_LOL_TOGGLE,     KC_TRNS,          KC_TRNS,          KC_TRNS,          KC_TRNS,          KC_TRNS,          \
+KC_ESC,           KC_F4,            KC_F5,            KC_NO,            KC_NO,            KC_TRNS,          KC_TRNS,          KC_TRNS,          KC_TRNS,          KC_TRNS,          \
+KC_TAB,           KC_F1,            KC_F2,            KC_F3,            KC_NO,            KC_TRNS,          KC_TRNS,          KC_TRNS,          KC_TRNS,          KC_TRNS,          \
+U_NP,             U_NP,             KC_TRNS,          KC_TRNS,          KC_TRNS,          KC_TRNS,          KC_TRNS,          KC_TRNS,          U_NP,             U_NP
+
+#define MIRYOKU_LAYERMAPPING_FORTNITE MIRYOKU_MAPPING
+#define MIRYOKU_LAYERMAPPING_FORTNITE_FN MIRYOKU_MAPPING
+
+#define MIRYOKU_LAYER_FORTNITE \
+KC_Q,             KC_W,             KC_E,             KC_R,             KC_T,             KC_Y,             KC_U,             KC_I,             KC_O,             KC_P,             \
+KC_A,             KC_S,             KC_D,             KC_F,             KC_G,             KC_H,             KC_J,             KC_K,             KC_L,             KC_QUOT,          \
+KC_Z,             KC_X,             KC_C,             KC_V,             KC_B,             KC_N,             KC_M,             KC_COMM,          KC_DOT,           KC_SLSH,          \
+U_NP,             U_NP,             MO(U_FORTNITE_FN), KC_SPC,           KC_LSFT,          KC_ENT,           KC_BSPC,          KC_LCTL,          U_NP,             U_NP
+
+#define MIRYOKU_LAYER_FORTNITE_FN \
+KC_1,             KC_TRNS,          KC_2,             KC_3,             KC_4,             KC_TRNS,          KC_TRNS,          KC_TRNS,          KC_TRNS,          KC_TRNS,          \
+KC_ESC,           KC_TRNS,          KC_TRNS,          KC_5,             KC_TRNS,          KC_TRNS,          KC_TRNS,          KC_TRNS,          KC_TRNS,          KC_TRNS,          \
+KC_TAB,           KC_NO,            KC_TRNS,          KC_TRNS,          U_FORTNITE_TOGGLE, KC_TRNS,          KC_TRNS,          KC_TRNS,          KC_TRNS,          KC_TRNS,          \
 U_NP,             U_NP,             KC_TRNS,          KC_TRNS,          KC_TRNS,          KC_TRNS,          KC_TRNS,          KC_TRNS,          U_NP,             U_NP
 
 #define U_MEDIA_T U_LOL_TOGGLE
+#define U_MEDIA_G U_FORTNITE_TOGGLE
 #else
 #define U_MEDIA_T U_NA
+#define U_MEDIA_G U_NA
 #endif
 
 // QWERTY + VI: Media + V sends F14 for a host-side dictation shortcut.
@@ -47,7 +66,7 @@ U_NP,             U_NP,             KC_TRNS,          KC_TRNS,          KC_TRNS,
 #if defined(MIRYOKU_NAV_VI)
 #define MIRYOKU_LAYER_MEDIA \
 TD(U_TD_BOOT),     TD(U_TD_U_TAP),    TD(U_TD_U_EXTRA),  TD(U_TD_U_BASE),   U_MEDIA_T,         RGB_MOD,           RGB_HUI,           RGB_SAI,           RGB_VAI,           RGB_TOG,           \
-KC_LGUI,           KC_LALT,           KC_LCTL,           KC_LSFT,           U_NA,              KC_MPRV,           KC_VOLD,           KC_VOLU,           KC_MNXT,           U_NU,              \
+KC_LGUI,           KC_LALT,           KC_LCTL,           KC_LSFT,           U_MEDIA_G,         KC_MPRV,           KC_VOLD,           KC_VOLU,           KC_MNXT,           U_NU,              \
 U_NA,              KC_ALGR,           TD(U_TD_U_FUN),    KC_F14,            U_NA,              U_NU,              U_NU,              U_NU,              U_NU,              OU_AUTO,           \
 U_NP,              U_NP,              U_NA,              U_NA,              U_NA,              KC_MSTP,           KC_MPLY,           KC_MUTE,           U_NP,              U_NP
 #endif

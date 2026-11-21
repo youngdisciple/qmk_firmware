@@ -1,4 +1,4 @@
-#+TITLE: Cheapino League mode
+#+TITLE: Cheapino League and Fortnite modes
 
 Enabled for the Cheapino with VI navigation and the normal (unflipped) layer
 orientation. Build with the existing personal options:
@@ -9,15 +9,17 @@ qmk compile -kb cheapino -km manna-harbour_miryoku -e MIRYOKU_ALPHAS=QWERTY -e M
 
 * Switching
 
-Hold the normal Miryoku Media thumb (Escape) and press physical T to enter.
-That same thumb becomes Fn in League mode. Hold it and press physical T again
-(the key that sends 5 in League mode) to exit. Release both keys after switching.
+Hold the normal Miryoku Media thumb (Escape) and press physical T for League
+or physical G for Fortnite. That same thumb becomes Fn in either game mode.
+Hold Fn and press physical T to exit League, or physical B to exit Fortnite.
+Release both keys after switching.
 Keys held through a switch are cleared and ignored until released, preventing
 stuck modifiers or accidental typing. The selected normal Miryoku base layout
 is retained. Mode selection is not saved; startup always uses normal Miryoku.
 
-The RP2040-Zero LED is steady white in normal mode and gold in League mode,
-including when Media or League Fn is held. Brightness is 32/255. Startup shows
+The RP2040-Zero LED is steady white in normal mode, gold in League mode, and
+blue in Fortnite mode, including when Media or either Fn is held.
+Brightness is 32/255. Startup shows
 white immediately, without the previous rainbow. Mode colors do not write EEPROM.
 
 * Layouts
@@ -34,16 +36,59 @@ League mode:
 Holding League Fn (dash means disabled):
 
 #+begin_example
- Esc     -      -      -     Exit       Y      U      I      O      P
- Tab    F4     F5      -      -         H      J      K      L      '
-  -     F1     F2     F3      -         N      M      ,      .      /
+  -      -      -      -     Exit       Y      U      I      O      P
+ Esc    F4     F5      -      -         H      J      K      L      '
+ Tab    F1     F2     F3      -         N      M      ,      .      /
               Fn    Space  Ctrl       Enter  Backspace  Shift
 #+end_example
 
-The function keys retain their Miryoku positions. They send ordinary F1-F5
+Fn+A sends Escape and Fn+Z sends Tab in both game modes. League Fn+Q is
+disabled. The function keys retain their Miryoku positions. They send ordinary F1-F5
 keycodes; camera behavior follows the game's bindings. There are no 6/7 keys
 or separate Utility layer. Exit to normal Miryoku to type in chat, then re-enter
-League mode manually. The normal Miryoku function layer is unchanged.
+the game mode manually. The normal Miryoku function layer is unchanged.
+
+Fortnite mode (physical QWERTY positions):
+
+#+begin_example
+  Q      W      E      R      T          Y      U      I      O      P
+  A      S      D      F      G          H      J      K      L      '
+  Z      X      C      V      B          N      M      ,      .      /
+              Fn    Space  Shift      Enter  Backspace  Ctrl
+#+end_example
+
+Holding Fortnite Fn (dash means disabled):
+
+#+begin_example
+  1      W      2      3      4          Y      U      I      O      P
+ Esc     S      D      5      G          H      J      K      L      '
+ Tab     -      C      V     Exit       N      M      ,      .      /
+              Fn    Space  Shift      Enter  Backspace  Ctrl
+#+end_example
+
+Weapon slots 1-5 are on Fn+Q/E/R/T/F. Fn+X is unassigned. WASD, jump,
+sprint, and crouch remain available except Fn+A temporarily sends Escape.
+
+Assign these suggested bindings manually in Fortnite's settings for Build
+and Zero Build. Firmware sends ordinary keys; it does not configure the game:
+
+| Action          | Key          |
+|-----------------+--------------|
+| Movement        | W/A/S/D      |
+| Jump            | Space        |
+| Sprint          | Left Shift   |
+| Crouch          | C            |
+| Interact        | E            |
+| Reload          | R            |
+| Pickaxe         | T            |
+| Wall            | Q            |
+| Floor           | G            |
+| Stairs          | V            |
+| Roof            | Z            |
+| Edit            | F            |
+| Inventory       | X            |
+| Map             | B            |
+| Weapon slots    | 1/2/3/4/5    |
 
 Gaming keys have no tap-hold behavior. Auto Shift is disabled while gaming and
 its previous enabled/disabled state is restored on exit. Caps Word and active
@@ -67,5 +112,8 @@ qmk flash .build/cheapino_manna-harbour_miryoku.uf2
 
 On the existing Miryoku firmware, hold Media and double-tap physical Q to enter
 the bootloader. Alternatively, use the controller's BOOT/RESET buttons.
-Verify white at startup, gold after entering League mode, camera keys and Tab
-while holding Fn, then white and normal typing after exiting.
+Verify white at startup and gold after entering League mode. Check the camera
+keys, Fn+A Escape, and Fn+Z Tab, then exit with Fn+T. Enter Fortnite with
+Media+G and verify blue, immediate WASD/thumb keys, and weapon slots on Fn.
+Check Fn+A Escape and Fn+Z Tab, then exit with Fn+B. Both exits should restore
+white and normal typing. Restarting should always return to normal mode.

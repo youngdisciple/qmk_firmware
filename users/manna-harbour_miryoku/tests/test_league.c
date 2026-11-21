@@ -10,6 +10,8 @@
 #define TD(action) KC_NO
 static const uint16_t league[] = U_MACRO_VA_ARGS(MIRYOKU_LAYERMAPPING_LOL, MIRYOKU_LAYER_LOL);
 static const uint16_t league_fn[] = U_MACRO_VA_ARGS(MIRYOKU_LAYERMAPPING_LOL_FN, MIRYOKU_LAYER_LOL_FN);
+static const uint16_t fortnite[] = U_MACRO_VA_ARGS(MIRYOKU_LAYERMAPPING_FORTNITE, MIRYOKU_LAYER_FORTNITE);
+static const uint16_t fortnite_fn[] = U_MACRO_VA_ARGS(MIRYOKU_LAYERMAPPING_FORTNITE_FN, MIRYOKU_LAYER_FORTNITE_FN);
 static const uint16_t media[] = U_MACRO_VA_ARGS(MIRYOKU_LAYERMAPPING_MEDIA, MIRYOKU_LAYER_MEDIA);
 static const uint16_t normal_fn[] = U_MACRO_VA_ARGS(MIRYOKU_LAYERMAPPING_FUN, MIRYOKU_LAYER_FUN);
 
@@ -42,8 +44,9 @@ static bool event(uint16_t keycode, uint8_t row, uint8_t col, bool pressed) {
     else matrix[row] &= ~mask;
     keyrecord_t record = {.event = {.key = {.row = row, .col = col}, .pressed = pressed}};
     const bool passed = process_record_user(keycode, &record);
-    if (passed && keycode == MO(U_LOL_FN)) {
-        const layer_state_t bit = (layer_state_t)1 << U_LOL_FN;
+    if (passed && (keycode == MO(U_LOL_FN) || keycode == MO(U_FORTNITE_FN))) {
+        const uint8_t fn = keycode == MO(U_LOL_FN) ? U_LOL_FN : U_FORTNITE_FN;
+        const layer_state_t bit = (layer_state_t)1 << fn;
         layer_state = layer_state_set_user(pressed ? layer_state | bit : layer_state & ~bit);
     }
     return passed;
@@ -59,7 +62,8 @@ static void test_layout(void) {
     assert(league[20] == KC_A && league[21] == KC_S && league[22] == KC_D);
     assert(league[23] == KC_F && league[24] == KC_B);
     assert(league[32] == MO(U_LOL_FN) && league[33] == KC_SPC && league[34] == KC_LCTL);
-    assert(league_fn[0] == KC_ESC && league_fn[10] == KC_TAB && league_fn[4] == U_LOL_TOGGLE);
+    assert(league_fn[0] == KC_NO && league_fn[10] == KC_ESC && league_fn[20] == KC_TAB);
+    assert(league_fn[4] == U_LOL_TOGGLE);
     const unsigned camera[] = {21, 22, 23, 11, 12};
     for (unsigned i = 0; i < 5; ++i) {
         assert(league_fn[camera[i]] == KC_F1 + i);
@@ -70,46 +74,74 @@ static void test_layout(void) {
         assert(league_fn[i] != KC_6 && league_fn[i] != KC_7);
         if ((i < 30 && i % 10 >= 5) || (i >= 32 && i <= 37)) assert(league_fn[i] == KC_TRNS);
     }
+    assert(U_FORTNITE == 12 && U_FORTNITE_FN == 13);
+    assert(sizeof(fortnite) / sizeof(*fortnite) == 40);
+    assert(sizeof(fortnite_fn) / sizeof(*fortnite_fn) == 40);
+    assert(media[14] == U_FORTNITE_TOGGLE);
+    assert(U_FORTNITE_TOGGLE != U_LOL_TOGGLE);
+    const uint16_t letters[] = {
+        KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I, KC_O, KC_P,
+        KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K, KC_L, KC_QUOT,
+        KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH,
+    };
+    for (unsigned i = 0; i < 30; ++i) assert(fortnite[i] == letters[i]);
+    const unsigned slots[] = {0, 2, 3, 4, 13};
+    for (unsigned i = 0; i < 5; ++i) assert(fortnite_fn[slots[i]] == KC_1 + i);
+    assert(fortnite_fn[10] == league_fn[10] && fortnite_fn[20] == league_fn[20]);
+    assert(fortnite_fn[21] == KC_NO && fortnite_fn[24] == U_FORTNITE_TOGGLE);
+    const unsigned passthrough[] = {
+        1, 11, 12, 14, 22, 23, 5, 6, 7, 8, 9,
+        15, 16, 17, 18, 19, 25, 26, 27, 28, 29, 32, 33, 34, 35, 36, 37,
+    };
+    for (unsigned i = 0; i < sizeof(passthrough) / sizeof(*passthrough); ++i)
+        assert(fortnite_fn[passthrough[i]] == KC_TRNS);
+    assert(fortnite[32] == MO(U_FORTNITE_FN));
+    assert(fortnite[33] == KC_SPC && fortnite[34] == KC_LSFT);
+    assert(fortnite[35] == KC_ENT && fortnite[36] == KC_BSPC && fortnite[37] == KC_LCTL);
 }
 
-static void test_roundtrip(bool initial_autoshift, bool thumb_released_first) {
+static void test_roundtrip(bool fortnite_mode, bool initial_autoshift, bool thumb_released_first) {
+    const uint8_t mode = fortnite_mode ? U_FORTNITE : U_LOL;
+    const uint8_t fn = fortnite_mode ? U_FORTNITE_FN : U_LOL_FN;
+    const uint16_t toggle = fortnite_mode ? U_FORTNITE_TOGGLE : U_LOL_TOGGLE;
+    const uint8_t color = fortnite_mode ? 170 : 30;
     autoshift = initial_autoshift;
     caps_word = oneshot_mods = locked_mods = oneshot_layer = true;
     held_mods = 0xff;
     assert(event(LT(U_MEDIA, KC_ESC), 6, 11, true));
     layer_move(U_MEDIA);
     assert(event(KC_LCTL, 1, 2, true)); // Another key held across entry.
-    assert(!event(U_LOL_TOGGLE, 4, 6, true));
-    assert(layer_state == (1u << U_LOL));
+    assert(!event(toggle, 4, 6, true));
+    assert(layer_state == (1u << mode));
     assert(!autoshift && !caps_word && !oneshot_mods && !locked_mods && !oneshot_layer && !held_mods);
-    assert(hue == 30 && saturation == 255 && brightness == 32);
+    assert(hue == color && saturation == 255 && brightness == 32);
     // The old Media release cannot become Fn or emit Escape after switching.
     if (thumb_released_first) {
         assert(!event(LT(U_MEDIA, KC_ESC), 6, 11, false));
-        assert(!event(U_LOL_TOGGLE, 4, 6, false));
+        assert(!event(toggle, 4, 6, false));
     } else {
-        assert(!event(U_LOL_TOGGLE, 4, 6, false));
+        assert(!event(toggle, 4, 6, false));
         assert(!event(LT(U_MEDIA, KC_ESC), 6, 11, false));
     }
     assert(!event(KC_LCTL, 1, 2, false));
-    assert(layer_state == (1u << U_LOL));
+    assert(layer_state == (1u << mode));
     assert(event(KC_1, 4, 10, true) && !autoshift);
     assert(event(KC_1, 4, 10, false));
-    assert(event(MO(U_LOL_FN), 6, 11, true));
-    assert(layer_state_is(U_LOL_FN) && hue == 30);
+    assert(event(MO(fn), 6, 11, true));
+    assert(layer_state_is(fn) && hue == color);
     assert(event(KC_TAB, 5, 10, true) && !autoshift);
     assert(event(KC_TAB, 5, 10, false));
-    assert(event(MO(U_LOL_FN), 6, 11, false));
-    assert(!layer_state_is(U_LOL_FN) && hue == 30);
+    assert(event(MO(fn), 6, 11, false));
+    assert(!layer_state_is(fn) && hue == color);
     // Exit with Fn and another modifier held. Old releases must be swallowed.
-    assert(event(MO(U_LOL_FN), 6, 11, true));
+    assert(event(MO(fn), 6, 11, true));
     assert(event(KC_LALT, 5, 6, true));
     held_mods = 4;
-    assert(!event(U_LOL_TOGGLE, 4, 6, true));
+    assert(!event(toggle, 4, 6, true));
     assert(layer_state == 0 && autoshift == initial_autoshift && !held_mods);
     assert(hue == 0 && saturation == 0 && brightness == 32);
-    assert(!event(MO(U_LOL_FN), 6, 11, false));
-    assert(!event(U_LOL_TOGGLE, 4, 6, false));
+    assert(!event(MO(fn), 6, 11, false));
+    assert(!event(toggle, 4, 6, false));
     assert(!event(KC_LALT, 5, 6, false));
     assert(layer_state == 0);
     assert(event(KC_Q, 4, 10, true));
@@ -123,7 +155,10 @@ int main(void) {
     rgb_initialized = true;
     keyboard_post_init_user();
     assert(hue == 0 && saturation == 0 && brightness == 32);
-    for (unsigned i = 0; i < 20; ++i) test_roundtrip(i % 2 == 0, i % 3 == 0);
-    assert(clear_count == 40);
-    puts("PASS: configured layouts, RGB startup ordering, colors, 20 mode roundtrips, held-key releases, Fn, and Auto Shift restoration");
+    for (unsigned i = 0; i < 20; ++i) {
+        test_roundtrip(false, i % 2 == 0, i % 3 == 0);
+        test_roundtrip(true, i % 2 == 0, i % 3 == 0);
+    }
+    assert(clear_count == 80);
+    puts("PASS: configured layouts, RGB startup ordering, colors, 40 mode roundtrips across League and Fortnite, held-key releases, Fn, and Auto Shift restoration");
 }
